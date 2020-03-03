@@ -2,43 +2,81 @@ module Main exposing (Msg(..), main, update)
 
 import Browser
 import Html exposing (..)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (class, placeholder, value)
+import Html.Events exposing (..)
 import Http
 import Json.Decode
     exposing
         ( Decoder
         , Error(..)
-        , field
+        , float
         , int
         , list
-        , map3
         , string
+        , succeed
         )
+import Json.Decode.Pipeline exposing (required)
+import Round
+
+
+
+-- TYPES AND ALIASES--
+
+
+type Msg
+    = SendHttpRequest
+    | DataReceived (Result Http.Error (List Release))
+    | UserNameChange String
+    | ProjectNameChange String
+
+
+type alias Author =
+    { login : String
+    , avatarUrl : String
+    }
+
+
+type alias Asset =
+    { id : Int
+    , name : String
+    , downloadCount : Int
+    , size : Float
+
+    --, createdAt : Date
+    }
 
 
 type alias Release =
     { id : Int
     , name : String
     , url : String
+    , author : Author
+    , assets : List Asset
     }
 
 
+
+-- MODEL --
+
+
 type alias Model =
-    { releases : List Release
+    { username : String
+    , projectName : String
+    , releases : List Release
+    , isLoading : Bool
     , errorMessage : Maybe String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { releases = [], errorMessage = Nothing }
+    ( { username = "", projectName = "", releases = [], isLoading = False, errorMessage = Nothing }
     , Cmd.none
     )
 
 
-type Msg
-    = SendHttpRequest
-    | DataReceived (Result Http.Error (List Release))
+
+-- UPDATE --
 
 
 buildErrorMessage : Http.Error -> String
@@ -60,71 +98,149 @@ buildErrorMessage httpError =
             message
 
 
-url : String
-url =
-    "https://api.github.com/repos/a-atalla/tuxcut/releases"
-
-
-getReleases : Cmd Msg
-getReleases =
+getReleases : String -> String -> Cmd Msg
+getReleases username projectName =
     Http.get
-        { url = url
+        { url = String.concat [ "https://api.github.com/repos/", username, "/", projectName, "/releases" ]
         , expect = Http.expectJson DataReceived (list releaseDecoder)
         }
 
 
 releaseDecoder : Decoder Release
 releaseDecoder =
-    map3 Release
-        (field "id" int)
-        (field "name" string)
-        (field "url" string)
+    succeed Release
+        |> required "id" int
+        |> required "name" string
+        |> required "url" string
+        |> required "author" authorDecoder
+        |> required "assets" (list assetDecoder)
+
+
+authorDecoder : Decoder Author
+authorDecoder =
+    succeed Author
+        |> required "login" string
+        |> required "avatar_url" string
+
+
+assetDecoder : Decoder Asset
+assetDecoder =
+    succeed Asset
+        |> required "id" int
+        |> required "name" string
+        |> required "download_count" int
+        |> required "size" float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SendHttpRequest ->
-            ( model, getReleases )
+            ( { model | isLoading = True, errorMessage = Nothing }, getReleases model.username model.projectName )
 
         DataReceived (Ok releases) ->
-            ( { model | releases = releases }, Cmd.none )
+            ( { model | releases = releases, isLoading = False }, Cmd.none )
 
         DataReceived (Err httpError) ->
-            ( { model | errorMessage = Just (buildErrorMessage httpError) }, Cmd.none )
+            ( { model | isLoading = False, errorMessage = Just (buildErrorMessage httpError) }, Cmd.none )
+
+        UserNameChange username ->
+            ( { model | username = username }, Cmd.none )
+
+        ProjectNameChange projectName ->
+            ( { model | projectName = projectName }, Cmd.none )
+
+
+
+-- VIEW --
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick SendHttpRequest ] [ text "Fetch Data" ]
-        , viewReleasesOrError model
+        [ div [ class "container" ]
+            [ h1 [ class "title" ] [ text "GitHub Release Stats" ]
+            , div [ class "form" ]
+                [ input [ placeholder "Username", class "input username-input", value model.username, onInput UserNameChange ] []
+                , input [ placeholder "Project Name", class "input project-name-input", value model.projectName, onInput ProjectNameChange ] []
+                , button [ onClick SendHttpRequest, class "btn" ] [ text "Get" ]
+                ]
+            ]
+        , div [ class "result-container" ]
+            [ viewReleasesOrError model
+            ]
         ]
 
 
 viewReleasesOrError : Model -> Html Msg
 viewReleasesOrError model =
-    case model.errorMessage of
-        Just msg ->
-            viewError msg
+    if model.isLoading then
+        p [] [ text "Loading ..." ]
 
-        Nothing ->
-            viewReleases model.releases
+    else
+        case model.errorMessage of
+            Just msg ->
+                viewError msg
+
+            Nothing ->
+                viewReleases model.releases
 
 
 viewError : String -> Html Msg
 viewError msg =
-    h1 [] [ text msg ]
+    div [ class "error-container" ]
+        [ h3 [ class "error-message" ] [ text msg ]
+        ]
 
 
 viewReleases : List Release -> Html Msg
 viewReleases releases =
-    ul [] (List.map viewName releases)
+    ul [ class "result-list" ] (List.map viewName releases)
 
 
 viewName : Release -> Html Msg
 viewName release =
-    li [] [ text release.name ]
+    div [ class "result-item" ]
+        [ div [ class "top" ]
+            [ h2
+                [ class "release-name" ]
+                [ text release.name ]
+            , h3 [ class "user" ]
+                [ i [ class "material-icons icon" ] [ text "person" ], text release.author.login ]
+            ]
+        , viewAssets release.assets
+        ]
+
+
+viewAssets : List Asset -> Html Msg
+viewAssets assets =
+    ul [] (List.map viewAsset assets)
+
+
+viewAsset : Asset -> Html Msg
+viewAsset asset =
+    li [ class "asset" ]
+        [ div [ class "asset-name" ] [ text asset.name ]
+        , div [ class "asset-info" ]
+            [ div [ class "icon-text size" ]
+                [ i [ class "material-icons icon" ] [ text "network_check" ]
+                , text (formatSize asset.size)
+                ]
+            , div [ class "icon-text" ]
+                [ i [ class "material-icons icon" ] [ text "cloud_download" ]
+                , text (String.fromInt asset.downloadCount)
+                ]
+            ]
+        ]
+
+
+formatSize : Float -> String
+formatSize size =
+    Round.round 2 (size / 1000000) ++ " MB"
+
+
+
+-- MAIN --
 
 
 main : Program () Model Msg

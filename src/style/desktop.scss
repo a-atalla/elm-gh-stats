@@ -1,0 +1,51 @@
+@media screen and (min-width: 1024px) {
+  .container {
+    width: 60%;
+
+    .title {
+
+    }
+
+    .form {
+      flex-direction: row;
+
+      .input {
+        width: 35%;
+      }
+
+      .username-input {
+
+      }
+
+      .project-name-input {
+
+      }
+
+      .btn {
+        width: 28%
+      }
+    }
+  }
+
+  .result-container {
+    width: 60%;
+
+    .result-list {
+      .result-item {
+        .asset {
+          flex-direction: row;
+          //width: 100%;
+        .asset-name {
+          flex: 1;
+        }
+        .asset-info {
+            flex: 1;
+          .icon-text {
+
+          }
+        }
+      }
+      }
+    }
+  }
+}
