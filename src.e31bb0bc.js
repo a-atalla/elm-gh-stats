@@ -11324,7 +11324,25 @@ var $author$project$Main$SendHttpRequest = {$: 'SendHttpRequest'};
 var $author$project$Main$UserNameChange = function (a) {
 	return {$: 'UserNameChange', a: a};
 };
+var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$virtual_dom$VirtualDom$Custom = function (a) {
+	return {$: 'Custom', a: a};
+};
+var $elm$html$Html$Events$custom = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Custom(decoder));
+	});
+var $author$project$Main$onCustomClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$custom,
+		'click',
+		$elm$json$Json$Decode$succeed(
+			{message: msg, preventDefault: true, stopPropagation: true}));
+};
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $author$project$Main$viewError = function (msg) {
@@ -11802,7 +11820,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('GitHub Release Stats')
 							])),
 						A2(
-						$elm$html$Html$div,
+						$elm$html$Html$form,
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('form')
@@ -11833,7 +11851,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick($author$project$Main$SendHttpRequest),
+										$author$project$Main$onCustomClick($author$project$Main$SendHttpRequest),
 										$elm$html$Html$Attributes$class('btn')
 									]),
 								_List_fromArray(
@@ -12439,7 +12457,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49467" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49274" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
