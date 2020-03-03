@@ -3,6 +3,8 @@ This app is inspired by [github-release-stats](https://github.com/Somsubhra/gith
 
 ## Run the app
 This project uses [Parcel Bundler](https://parceljs.org) to compile/bundle assets (*.elm, *.js, *.scss, ...etc)
+also it provides a nice hot reloading while development
+
 ```shell script
 # Install the compiler and the formatter globally (if you don't yet)
 npm i -g elm elm-format
