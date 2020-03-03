@@ -155,15 +155,26 @@ update msg model =
 -- VIEW --
 
 
+onCustomClick : msg -> Html.Attribute msg
+onCustomClick msg =
+    custom "click"
+        (succeed
+            { message = msg
+            , stopPropagation = True
+            , preventDefault = True
+            }
+        )
+
+
 view : Model -> Html Msg
 view model =
     div []
         [ div [ class "container" ]
             [ h1 [ class "title" ] [ text "GitHub Release Stats" ]
-            , div [ class "form" ]
+            , form [ class "form" ]
                 [ input [ placeholder "Username", class "input username-input", value model.username, onInput UserNameChange ] []
                 , input [ placeholder "Project Name", class "input project-name-input", value model.projectName, onInput ProjectNameChange ] []
-                , button [ onClick SendHttpRequest, class "btn" ] [ text "Get" ]
+                , button [ onCustomClick SendHttpRequest, class "btn" ] [ text "Get" ]
                 ]
             ]
         , div [ class "result-container" ]
