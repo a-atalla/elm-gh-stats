@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "parcel src/index.html",
-    "fmt": "elm-format src/Main.elm"
+    "build": "parcel build src/index.html --public-url .",
+    "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
     "parcel-bundler": "^1.12.4",
