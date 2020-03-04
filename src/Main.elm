@@ -1,5 +1,6 @@
-module Main exposing (Msg(..), main, update)
+module Main exposing (main)
 
+import Array
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (class, placeholder, value)
@@ -17,6 +18,7 @@ import Json.Decode
         )
 import Json.Decode.Pipeline exposing (required)
 import Round
+import Utils exposing (onCustomClick)
 
 
 
@@ -41,8 +43,7 @@ type alias Asset =
     , name : String
     , downloadCount : Int
     , size : Float
-
-    --, createdAt : Date
+    , createdAt : String
     }
 
 
@@ -70,7 +71,12 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { username = "", projectName = "", releases = [], isLoading = False, errorMessage = Nothing }
+    ( { username = ""
+      , projectName = ""
+      , releases = []
+      , isLoading = False
+      , errorMessage = Nothing
+      }
     , Cmd.none
     )
 
@@ -101,7 +107,14 @@ buildErrorMessage httpError =
 getReleases : String -> String -> Cmd Msg
 getReleases username projectName =
     Http.get
-        { url = String.concat [ "https://api.github.com/repos/", username, "/", projectName, "/releases" ]
+        { url =
+            String.concat
+                [ "https://api.github.com/repos/"
+                , username
+                , "/"
+                , projectName
+                , "/releases"
+                ]
         , expect = Http.expectJson DataReceived (list releaseDecoder)
         }
 
@@ -130,19 +143,27 @@ assetDecoder =
         |> required "name" string
         |> required "download_count" int
         |> required "size" float
+        |> required "created_at" string
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         SendHttpRequest ->
-            ( { model | isLoading = True, errorMessage = Nothing }, getReleases model.username model.projectName )
+            ( { model | isLoading = True, errorMessage = Nothing }
+            , getReleases model.username model.projectName
+            )
 
         DataReceived (Ok releases) ->
             ( { model | releases = releases, isLoading = False }, Cmd.none )
 
         DataReceived (Err httpError) ->
-            ( { model | isLoading = False, errorMessage = Just (buildErrorMessage httpError) }, Cmd.none )
+            ( { model
+                | isLoading = False
+                , errorMessage = Just (buildErrorMessage httpError)
+              }
+            , Cmd.none
+            )
 
         UserNameChange username ->
             ( { model | username = username }, Cmd.none )
@@ -153,17 +174,6 @@ update msg model =
 
 
 -- VIEW --
-
-
-onCustomClick : msg -> Html.Attribute msg
-onCustomClick msg =
-    custom "click"
-        (succeed
-            { message = msg
-            , stopPropagation = True
-            , preventDefault = True
-            }
-        )
 
 
 view : Model -> Html Msg
@@ -241,8 +251,26 @@ viewAsset asset =
                 [ i [ class "material-icons icon" ] [ text "cloud_download" ]
                 , text (String.fromInt asset.downloadCount)
                 ]
+            , div [ class "icon-text" ]
+                [ i [ class "material-icons icon" ] [ text "access_time" ]
+                , text (formatDate asset.createdAt)
+                ]
             ]
         ]
+
+
+formatDate : String -> String
+formatDate theDate =
+    let
+        newDate =
+            Array.get 0 (Array.fromList (String.split "T" theDate))
+    in
+    case newDate of
+        Just value ->
+            value
+
+        Nothing ->
+            "Invalid Date"
 
 
 formatSize : Float -> String

@@ -11196,9 +11196,9 @@ var $author$project$Main$Release = F5(
 	function (id, name, url, author, assets) {
 		return {assets: assets, author: author, id: id, name: name, url: url};
 	});
-var $author$project$Main$Asset = F4(
-	function (id, name, downloadCount, size) {
-		return {downloadCount: downloadCount, id: id, name: name, size: size};
+var $author$project$Main$Asset = F5(
+	function (id, name, downloadCount, size, createdAt) {
+		return {createdAt: createdAt, downloadCount: downloadCount, id: id, name: name, size: size};
 	});
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
@@ -11210,21 +11210,25 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	});
 var $author$project$Main$assetDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'size',
-	$elm$json$Json$Decode$float,
+	'created_at',
+	$elm$json$Json$Decode$string,
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'download_count',
-		$elm$json$Json$Decode$int,
+		'size',
+		$elm$json$Json$Decode$float,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'name',
-			$elm$json$Json$Decode$string,
+			'download_count',
+			$elm$json$Json$Decode$int,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'id',
-				$elm$json$Json$Decode$int,
-				$elm$json$Json$Decode$succeed($author$project$Main$Asset)))));
+				'name',
+				$elm$json$Json$Decode$string,
+				A3(
+					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'id',
+					$elm$json$Json$Decode$int,
+					$elm$json$Json$Decode$succeed($author$project$Main$Asset))))));
 var $author$project$Main$Author = F2(
 	function (login, avatarUrl) {
 		return {avatarUrl: avatarUrl, login: login};
@@ -11336,7 +11340,7 @@ var $elm$html$Html$Events$custom = F2(
 			event,
 			$elm$virtual_dom$VirtualDom$Custom(decoder));
 	});
-var $author$project$Main$onCustomClick = function (msg) {
+var $author$project$Utils$onCustomClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$custom,
 		'click',
@@ -11368,6 +11372,19 @@ var $author$project$Main$viewError = function (msg) {
 };
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$i = _VirtualDom_node('i');
+var $author$project$Main$formatDate = function (theDate) {
+	var newDate = A2(
+		$elm$core$Array$get,
+		0,
+		$elm$core$Array$fromList(
+			A2($elm$core$String$split, 'T', theDate)));
+	if (newDate.$ === 'Just') {
+		var value = newDate.a;
+		return value;
+	} else {
+		return 'Invalid Date';
+	}
+};
 var $elm$core$Basics$abs = function (n) {
 	return (n < 0) ? (-n) : n;
 };
@@ -11706,6 +11723,27 @@ var $author$project$Main$viewAsset = function (asset) {
 									])),
 								$elm$html$Html$text(
 								$elm$core$String$fromInt(asset.downloadCount))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('icon-text')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$i,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('material-icons icon')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('access_time')
+									])),
+								$elm$html$Html$text(
+								$author$project$Main$formatDate(asset.createdAt))
 							]))
 					]))
 			]));
@@ -11851,7 +11889,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
-										$author$project$Main$onCustomClick($author$project$Main$SendHttpRequest),
+										$author$project$Utils$onCustomClick($author$project$Main$SendHttpRequest),
 										$elm$html$Html$Attributes$class('btn')
 									]),
 								_List_fromArray(
@@ -11882,7 +11920,7 @@ var $author$project$Main$main = $elm$browser$Browser$element(
 		view: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Asset":{"args":[],"type":"{ id : Basics.Int, name : String.String, downloadCount : Basics.Int, size : Basics.Float }"},"Main.Author":{"args":[],"type":"{ login : String.String, avatarUrl : String.String }"},"Main.Release":{"args":[],"type":"{ id : Basics.Int, name : String.String, url : String.String, author : Main.Author, assets : List.List Main.Asset }"}},"unions":{"Main.Msg":{"args":[],"tags":{"SendHttpRequest":[],"DataReceived":["Result.Result Http.Error (List.List Main.Release)"],"UserNameChange":["String.String"],"ProjectNameChange":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Asset":{"args":[],"type":"{ id : Basics.Int, name : String.String, downloadCount : Basics.Int, size : Basics.Float, createdAt : String.String }"},"Main.Author":{"args":[],"type":"{ login : String.String, avatarUrl : String.String }"},"Main.Release":{"args":[],"type":"{ id : Basics.Int, name : String.String, url : String.String, author : Main.Author, assets : List.List Main.Asset }"}},"unions":{"Main.Msg":{"args":[],"tags":{"SendHttpRequest":[],"DataReceived":["Result.Result Http.Error (List.List Main.Release)"],"UserNameChange":["String.String"],"ProjectNameChange":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"Basics.Float":{"args":[],"tags":{"Float":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});
 
 //////////////////// HMR BEGIN ////////////////////
 
@@ -12457,7 +12495,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49274" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57448" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
