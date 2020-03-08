@@ -1,6 +1,7 @@
 $font: 'Cairo', sans-serif;
 $border-radius: 8px;
 $color-green: #20bf6b;
+$footer-height: 75px;
 
 * {
   margin: 0;
@@ -9,10 +10,17 @@ $color-green: #20bf6b;
   box-sizing: border-box;
 }
 
+html {
+  position: relative;
+  min-height: 100%;
+}
+
 body {
   background: #0f2027; /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #0f2027, #203a43, #2c5364); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  margin-bottom: $footer-height;
+  padding: 25px;
 }
 
 .container {
@@ -78,7 +86,8 @@ body {
 .result-container {
   width: 95%;
   margin: 0 auto;
-
+  display: flex;
+  justify-content: center;
   .result-list {
     .result-item {
       color: #fff;
@@ -90,13 +99,16 @@ body {
       .top {
         display: flex;
         justify-content: space-between;
+
         .release-name {
           color: $color-green;
         }
+
         .user {
           display: flex;
           justify-content: space-around;
           align-items: center;
+
           .icon {
             margin-right: 8px;
           }
@@ -112,11 +124,13 @@ body {
         .asset-name {
 
         }
+
         .asset-info {
           display: flex;
           justify-content: flex-end;
           align-self: flex-start;
           width: 100%;
+
           .icon-text {
             margin: 0 8px;
           }
@@ -142,11 +156,27 @@ body {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+
   .icon {
     margin-right: 8px;
     font-size: 20px;
   }
 }
+
 .box {
   border: 1px solid #fff;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #00000050;
+  color: #ffffff;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: $footer-height;
+  width: 100%;
+  overflow: hidden;
 }

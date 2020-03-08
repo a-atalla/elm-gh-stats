@@ -12,6 +12,15 @@
 
 <body>
     <div id="elm-app"></div>
+
+    <footer class="footer">
+        <footer>&copy; Copyright <span id="year" style="margin: 0 5px"></span> Ahmed Atalla</footer>
+    </footer>
+
+    <script>
+        const yearElement = document.querySelector('#year');
+        yearElement.textContent = ` ${new Date().getFullYear()} `
+    </script>
     <script src="index.js"></script>
 </body>
 

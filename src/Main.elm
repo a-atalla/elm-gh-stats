@@ -180,7 +180,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "container" ]
-            [ h1 [ class "title" ] [ text "GitHub Release Stats" ]
+            [ h6 [ class "title" ] [ text "GitHub Release Stats" ]
             , form [ class "form" ]
                 [ input [ placeholder "Username", class "input username-input", value model.username, onInput UserNameChange ] []
                 , input [ placeholder "Project Name", class "input project-name-input", value model.projectName, onInput ProjectNameChange ] []
@@ -196,7 +196,32 @@ view model =
 viewReleasesOrError : Model -> Html Msg
 viewReleasesOrError model =
     if model.isLoading then
-        p [] [ text "Loading ..." ]
+        div [ class "lds-spinner" ]
+            [ div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            , div []
+                []
+            ]
 
     else
         case model.errorMessage of
@@ -225,7 +250,7 @@ viewName release =
         [ div [ class "top" ]
             [ h2
                 [ class "release-name" ]
-                [ text release.name ]
+                [ text (release.name ++ " - " ++ String.fromInt (getTotalCounts release.assets)) ]
             , h3 [ class "user" ]
                 [ i [ class "material-icons icon" ] [ text "person" ], text release.author.login ]
             ]
@@ -276,6 +301,11 @@ formatDate theDate =
 formatSize : Float -> String
 formatSize size =
     Round.round 2 (size / 1000000) ++ " MB"
+
+
+getTotalCounts : List Asset -> Int
+getTotalCounts assets =
+    List.sum (List.map (\asset -> asset.downloadCount) assets)
 
 
 
