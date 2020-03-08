@@ -200,6 +200,11 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"style/loader.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
 },{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"Main.elm":[function(require,module,exports) {
 (function(scope){
 'use strict';
@@ -11329,7 +11334,7 @@ var $author$project$Main$UserNameChange = function (a) {
 	return {$: 'UserNameChange', a: a};
 };
 var $elm$html$Html$form = _VirtualDom_node('form');
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $elm$html$Html$h6 = _VirtualDom_node('h6');
 var $elm$virtual_dom$VirtualDom$Custom = function (a) {
 	return {$: 'Custom', a: a};
 };
@@ -11369,6 +11374,18 @@ var $author$project$Main$viewError = function (msg) {
 						$elm$html$Html$text(msg)
 					]))
 			]));
+};
+var $elm$core$List$sum = function (numbers) {
+	return A3($elm$core$List$foldl, $elm$core$Basics$add, 0, numbers);
+};
+var $author$project$Main$getTotalCounts = function (assets) {
+	return $elm$core$List$sum(
+		A2(
+			$elm$core$List$map,
+			function (asset) {
+				return asset.downloadCount;
+			},
+			assets));
 };
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$i = _VirtualDom_node('i');
@@ -11779,7 +11796,9 @@ var $author$project$Main$viewName = function (release) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text(release.name)
+								$elm$html$Html$text(
+								release.name + (' - ' + $elm$core$String$fromInt(
+									$author$project$Main$getTotalCounts(release.assets))))
 							])),
 						A2(
 						$elm$html$Html$h3,
@@ -11817,11 +11836,25 @@ var $author$project$Main$viewReleases = function (releases) {
 var $author$project$Main$viewReleasesOrError = function (model) {
 	if (model.isLoading) {
 		return A2(
-			$elm$html$Html$p,
-			_List_Nil,
+			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$text('Loading ...')
+					$elm$html$Html$Attributes$class('lds-spinner')
+				]),
+			_List_fromArray(
+				[
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil),
+					A2($elm$html$Html$div, _List_Nil, _List_Nil)
 				]));
 	} else {
 		var _v0 = model.errorMessage;
@@ -11848,7 +11881,7 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$h1,
+						$elm$html$Html$h6,
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('title')
@@ -12462,12 +12495,14 @@ require("./style/default.scss");
 
 require("./style/desktop.scss");
 
+require("./style/loader.scss");
+
 var _Main = require("./Main.elm");
 
 _Main.Elm.Main.init({
   node: document.getElementById('elm-app')
 });
-},{"typeface-cairo":"../node_modules/typeface-cairo/index.css","./style/default.scss":"style/default.scss","./style/desktop.scss":"style/desktop.scss","./Main.elm":"Main.elm"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"typeface-cairo":"../node_modules/typeface-cairo/index.css","./style/default.scss":"style/default.scss","./style/desktop.scss":"style/desktop.scss","./style/loader.scss":"style/loader.scss","./Main.elm":"Main.elm"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -12495,7 +12530,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57448" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64132" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
