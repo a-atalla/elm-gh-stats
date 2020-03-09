@@ -11334,7 +11334,7 @@ var $author$project$Main$UserNameChange = function (a) {
 	return {$: 'UserNameChange', a: a};
 };
 var $elm$html$Html$form = _VirtualDom_node('form');
-var $elm$html$Html$h6 = _VirtualDom_node('h6');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$virtual_dom$VirtualDom$Custom = function (a) {
 	return {$: 'Custom', a: a};
 };
@@ -11881,7 +11881,7 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$h6,
+						$elm$html$Html$h1,
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$class('title')
@@ -12530,7 +12530,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64132" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52508" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

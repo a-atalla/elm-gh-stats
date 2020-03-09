@@ -180,7 +180,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "container" ]
-            [ h6 [ class "title" ] [ text "GitHub Release Stats" ]
+            [ h1 [ class "title" ] [ text "GitHub Release Stats" ]
             , form [ class "form" ]
                 [ input [ placeholder "Username", class "input username-input", value model.username, onInput UserNameChange ] []
                 , input [ placeholder "Project Name", class "input project-name-input", value model.projectName, onInput ProjectNameChange ] []
